@@ -19,10 +19,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const cidadeInput = document.getElementById("cidade");
   const btnBuscar = document.getElementById("btnBuscar");
   const btnGPS = document.getElementById("btnGPS");
+  const btnRefresh = document.getElementById("btnRefresh");
+  const audio = document.getElementById("alertSound");
 
   // ================= EVENTOS =================
   btnBuscar.addEventListener("click", buscarCidade);
   btnGPS.addEventListener("click", usarGPS);
+  btnRefresh.addEventListener("click", () => window.location.reload());
+
+  // ================= AUDIO =================
+  let audioLiberado = false;
+
+  document.addEventListener("click", () => {
+    if (!audioLiberado && audio) {
+      audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audioLiberado = true;
+        console.log("🔓 Som liberado");
+      }).catch(() => {});
+    }
+  }, { once: true });
 
   // ================= FUNÇÕES =================
   function mostrarCidade(nome) {
@@ -36,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function definirStatus(prob, chuva) {
     if (chuva > 0.5) return "🔴 Chuva forte ⛈️";
-    if (prob >= 40) return "🟠 Chuva se aproximando";
-    if (prob >= 20) return "🟡 Chuva possível";
+    if (prob >= 40) return "🟠 Chuva se aproximando ☁️";
+    if (prob >= 20) return "🟡 Chuva possível ☔️";
     return "🟢 Sem chuva";
   }
 
@@ -95,9 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
             nomeCidade = data.results[0].name;
           }
         }
-      } catch (e) {
-        // silencioso
-      }
+      } catch {}
 
       mostrarCidade(nomeCidade);
       atualizarTudo();
@@ -116,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await r.json();
 
-      // Próximos 4 horários
       const prob = Math.max(...data.hourly.precipitation_probability.slice(0, 4));
       const chuva = Math.max(...data.hourly.precipitation.slice(0, 4));
 
@@ -135,15 +149,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const agora = new Date();
-
       const horaFormatada = agora.toLocaleTimeString("pt-BR", {
-  hour: "2-digit",
-  minute: "2-digit"
-    });
+        hour: "2-digit",
+        minute: "2-digit"
+      });
 
-    ultimaAtualizacaoEl.innerText = `🕒 Última atualização: ${horaFormatada}`;
-
-    restante = INTERVALO;
+      ultimaAtualizacaoEl.innerText = `🕒 Última atualização: ${horaFormatada}`;
+      restante = INTERVALO;
 
     } catch (e) {
       statusEl.innerText = "❌ Erro ao atualizar previsão";
@@ -152,43 +164,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function dispararAlerta(prob, chuva) {
+    if (alertaDisparado) return;
+
+    if (prob >= 40 || chuva > 0.5) {
+      alertaDisparado = true;
+
+      alertaEl.innerHTML = `
+        <div class="alerta">
+          ⛈️ ALERTA DE CHUVA!<br>
+          Prob.: ${prob}% | Precip.: ${chuva.toFixed(2)} mm
+        </div>
+      `;
+
+      if (audioLiberado && audio) {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+    }
+  }
+
   function atualizarContador() {
     const m = Math.floor(restante / 60);
     const s = restante % 60;
-    contadorEl.innerText = `🔄 Próxima atualização em ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    contadorEl.innerText =
+      `🔄 Próxima atualização em ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     if (restante > 0) restante--;
   }
 
   function atualizarTudo() {
     atualizarPrevisao();
   }
-
-  function dispararAlerta(prob, chuva) {
-    if (alertaDisparado) return;
-
-    if (prob >= 40 || chuva > 0.5) {
-      alertaDisparado = true;
-      alertaEl.innerHTML = `<div class="alerta">⛈️ ALERTA DE CHUVA! Prob.: ${prob}% | Precip.: ${chuva.toFixed(2)} mm</div>`;
-    }
-  }
-
-let audioLiberado = false;
-
-document.addEventListener("click", () => {
-  if (!audioLiberado) {
-    const audio = document.getElementById("alertSound");
-    audio.play().then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      audioLiberado = true;
-      console.log("🔓 Som liberado");
-    }).catch(() => {});
-  }
-});
-
-if (precipitacao > 0) {
-  document.getElementById("alertSound").play();
-}
 
   // ================= INICIALIZAÇÃO =================
   mostrarCidade("Catanduva");
