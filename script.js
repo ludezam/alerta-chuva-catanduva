@@ -172,6 +172,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+let audioLiberado = false;
+
+document.addEventListener("click", () => {
+  if (!audioLiberado) {
+    const audio = document.getElementById("alertSound");
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioLiberado = true;
+      console.log("🔓 Som liberado");
+    }).catch(() => {});
+  }
+});
+
   // ================= INICIALIZAÇÃO =================
   mostrarCidade("Catanduva");
   atualizarTudo();
