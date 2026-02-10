@@ -186,6 +186,10 @@ document.addEventListener("click", () => {
   }
 });
 
+if (precipitacao > 0) {
+  document.getElementById("alertSound").play();
+}
+
   // ================= INICIALIZAÇÃO =================
   mostrarCidade("Catanduva");
   atualizarTudo();
