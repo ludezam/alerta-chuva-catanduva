@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ================= CONFIGURAÇÃO =================
   const INTERVALO = 300; // segundos
-  let LAT = -21.1378;
-  let LON = -48.9726;
+  let LAT = -20.8113;
+  let LON = -49.3758;
   let restante = INTERVALO;
   let alertaDisparado = false;
 
@@ -221,8 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ================= INICIALIZAÇÃO =================
-  mostrarCidade("Catanduva-SP");
-  atualizarMapa("Catanduva-SP");
+  mostrarCidade("São José do Rio Preto-SP");
+  atualizarMapa("São José do Rio Preto-SP");
   atualizarTudo();
   atualizarContador();
 
