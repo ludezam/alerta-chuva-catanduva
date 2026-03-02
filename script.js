@@ -45,6 +45,48 @@ document.addEventListener("DOMContentLoaded", () => {
   // }, { once: true });
 
   // ================= FUNÇÕES =================
+  const UF_POR_ESTADO = {
+    Acre: "AC",
+    Alagoas: "AL",
+    Amapá: "AP",
+    Amazonas: "AM",
+    Bahia: "BA",
+    Ceará: "CE",
+    "Distrito Federal": "DF",
+    "Espírito Santo": "ES",
+    Goiás: "GO",
+    Maranhão: "MA",
+    "Mato Grosso": "MT",
+    "Mato Grosso do Sul": "MS",
+    "Minas Gerais": "MG",
+    Pará: "PA",
+    Paraíba: "PB",
+    Paraná: "PR",
+    Pernambuco: "PE",
+    Piauí: "PI",
+    "Rio de Janeiro": "RJ",
+    "Rio Grande do Norte": "RN",
+    "Rio Grande do Sul": "RS",
+    Rondônia: "RO",
+    Roraima: "RR",
+    "Santa Catarina": "SC",
+    "São Paulo": "SP",
+    Sergipe: "SE",
+    Tocantins: "TO"
+  };
+
+  function formatarNomeCidade({ name, admin1, country_code }) {
+    if (!name) return "Local atual";
+
+    if (country_code === "BR" && admin1) {
+      const uf = UF_POR_ESTADO[admin1] || admin1;
+      return `${name}-${uf}`;
+    }
+
+    if (admin1) return `${name}-${admin1}`;
+    return name;
+  }
+
   function mostrarCidade(nome) {
     nomeCidadeAtual = nome;
     cidadeAtualEl.innerHTML = `📍 Cidade: <b>${nome}</b>`;
@@ -77,8 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("Cidade não encontrada para as coordenadas");
     }
 
-    const estado = resultado.admin1 ? `-${resultado.admin1}` : "";
-    return `${resultado.name}${estado}`;
+    return formatarNomeCidade(resultado);
   }
 
   function definirStatus(prob, chuva) {
@@ -127,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       LAT = data.results[0].latitude;
       LON = data.results[0].longitude;
 
-      const nomeCidade = data.results[0].name;
+      const nomeCidade = formatarNomeCidade(data.results[0]);
       mostrarCidade(nomeCidade);
       atualizarMapa(nomeCidade);
       atualizarTudo();
