@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const INTERVALO = 300; // segundos
   let LAT = -20.8113;
   let LON = -49.3758;
-  let nomeCidadeAtual = "Local atual";
+  let nomeCidadeAtual = "São José do Rio Preto-SP";
   let restante = INTERVALO;
   let alertaDisparado = false;
 
@@ -204,8 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
       atualizarTudo();
     }, () => {
       statusEl.innerText = "❌ Permissão de localização negada";
-      cidadeAtualEl.innerHTML = "📍 Cidade: <b>Localização não permitida</b>";
-      detalheEl.innerText = "Permita a localização para carregar mapa e previsão da sua região.";
     });
   }
 
@@ -279,13 +277,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ================= INICIALIZAÇÃO =================
-  cidadeAtualEl.innerHTML = "📍 Cidade: <b>Aguardando localização...</b>";
-  statusEl.innerText = "📍 Permita a localização para carregar mapa e previsão";
-  detalheEl.innerText = "";
-  alertaEl.innerHTML = "";
+  mostrarCidade("São José do Rio Preto-SP");
+  atualizarMapa("São José do Rio Preto-SP");
+  atualizarTudo();
   atualizarContador();
-
-  usarGPS();
 
   setInterval(atualizarPrevisao, INTERVALO * 1000);
   setInterval(atualizarContador, 1000);
