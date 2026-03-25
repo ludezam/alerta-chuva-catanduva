@@ -82,22 +82,19 @@ button:hover {
   margin-top: 15px;
 }
 
-.mapa-ipmet-frame {
+.btn-ipmet {
+  display: inline-block;
   margin-top: 15px;
-  border-radius: 12px;
-  overflow: hidden;
-  height: clamp(320px, 70vh, 720px);
-  background: #0b121b;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #1e90ff;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-.mapa-ipmet {
-  margin-top: 0;
-  border-radius: 0;
-  height: 100%;
-}
-
-.mapa-fixo-container a {
-  color: #8fc7ff;
+.btn-ipmet:hover {
+  opacity: 0.9;
 }
 
 small {
