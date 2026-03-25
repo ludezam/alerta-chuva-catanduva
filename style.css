@@ -82,6 +82,21 @@ button:hover {
   margin-top: 15px;
 }
 
+.mapa-ipmet-frame {
+  margin-top: 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  height: clamp(320px, 65vh, 620px);
+  background: #0b121b;
+}
+
+.mapa-ipmet {
+  margin-top: 0;
+  border-radius: 0;
+  height: calc(100% + 90px);
+  transform: translateY(-90px);
+}
+
 small {
   display: block;
   margin-top: 15px;
