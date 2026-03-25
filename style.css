@@ -86,15 +86,18 @@ button:hover {
   margin-top: 15px;
   border-radius: 12px;
   overflow: hidden;
-  height: clamp(320px, 65vh, 620px);
+  height: clamp(320px, 70vh, 720px);
   background: #0b121b;
 }
 
 .mapa-ipmet {
   margin-top: 0;
   border-radius: 0;
-  height: calc(100% + 90px);
-  transform: translateY(-90px);
+  height: 100%;
+}
+
+.mapa-fixo-container a {
+  color: #8fc7ff;
 }
 
 small {
