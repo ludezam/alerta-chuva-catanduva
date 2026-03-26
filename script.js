@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ================= CONFIGURAÇÃO =================
   const INTERVALO = 300; // segundos
+  const EXIBIR_PAINEL_INFO = false; // false = oculta status do tempo e alertas sem remover o código
   let LAT = -20.8113;
   let LON = -49.3758;
   let nomeCidadeAtual = "São José do Rio Preto-SP";
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ================= ELEMENTOS =================
   const cidadeAtualEl = document.getElementById("cidadeAtual");
+  const painelInfoEl = document.querySelector(".box");
   const statusEl = document.getElementById("status");
   const detalheEl = document.getElementById("detalhe");
   const alertaEl = document.getElementById("alerta");
@@ -23,6 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnGPS = document.getElementById("btnGPS");
   const btnRefresh = document.getElementById("btnRefresh");
   const audio = document.getElementById("alertSound");
+
+  function aplicarVisibilidadePainelInfo() {
+    if (!painelInfoEl) return;
+    painelInfoEl.style.display = EXIBIR_PAINEL_INFO ? "" : "none";
+  }
 
   // ================= EVENTOS =================
   btnBuscar.addEventListener("click", buscarCidade);
@@ -208,6 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function atualizarPrevisao() {
+    if (!EXIBIR_PAINEL_INFO) return;
+
     try {
       const r = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&hourly=precipitation_probability,precipitation,temperature_2m,wind_speed_10m&timezone=America/Sao_Paulo`
@@ -273,16 +282,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function atualizarTudo() {
-    atualizarPrevisao();
+    if (EXIBIR_PAINEL_INFO) {
+      atualizarPrevisao();
+    }
   }
 
   // ================= INICIALIZAÇÃO =================
   mostrarCidade("São José do Rio Preto-SP");
+  aplicarVisibilidadePainelInfo();
   atualizarMapa("São José do Rio Preto-SP");
   atualizarTudo();
-  atualizarContador();
+  if (EXIBIR_PAINEL_INFO) {
+    atualizarContador();
+  }
 
-  setInterval(atualizarPrevisao, INTERVALO * 1000);
-  setInterval(atualizarContador, 1000);
+  if (EXIBIR_PAINEL_INFO) {
+    setInterval(atualizarPrevisao, INTERVALO * 1000);
+    setInterval(atualizarContador, 1000);
+  }
 
 });
