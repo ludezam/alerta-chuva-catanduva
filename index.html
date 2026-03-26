@@ -22,7 +22,7 @@
     </iframe>
   </div>
 
-  <div class="mapa-fixo-container">
+  <section class="controles" aria-label="Controles do mapa e busca de cidade">
     <a
       class="btn-ipmet"
       href="https://www.ipmetradar.com.br/2mobileGis.php"
@@ -31,34 +31,32 @@
     >
       Ver no IPMet
     </a>
-    <br>
-  </div>
+
+    <div class="busca">
+      <input
+        id="cidade"
+        type="text"
+        placeholder="Digite a cidade"
+        aria-label="Nome da cidade"
+      >
+      <button id="btnBuscar" type="button">🔎 Buscar cidade</button>
+      <button id="btnGPS" type="button">📍 Meu local atual</button>
+      <button id="btnRefresh" type="button">🔄 Atualizar</button>
+    </div>
+  </section>
 
   <div class="box">
-      <div id="cidadeAtual" class="cidade-atual">
-    📍 Cidade: <b>São José do Rio Preto-SP</b>
-  </div>
+    <div id="cidadeAtual" class="cidade-atual">
+      📍 Cidade: <b>São José do Rio Preto-SP</b>
+    </div>
     <div class="status" id="status">⏳ Carregando...</div>
     <div id="detalhe"></div>
     <div id="alerta"></div>
-  <!--  <div id="contador"></div> -->
-    <div id="ultimaAtualizacao"></div> 
-  </div>
-
-  <div class="busca">
-    <input
-      id="cidade"
-      type="text"
-      placeholder="Digite a cidade"
-      aria-label="Nome da cidade"
-    >
-    <button id="btnBuscar" type="button">🔎 Buscar cidade</button>
-    <button id="btnGPS" type="button">📍 Meu local atual</button>
+    <!--  <div id="contador"></div> -->
+    <div id="ultimaAtualizacao"></div>
   </div>
 
   <footer>
-    <button id="btnRefresh">🔄 Atualizar</button> 
-    <br>
     <small>Desenvolvido por LDZ</small>
   </footer>
 
