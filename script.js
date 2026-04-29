@@ -144,21 +144,36 @@ document.addEventListener("DOMContentLoaded", () => {
     return "☁️";
   }
 
+  function obterChaveHoraAtualSaoPaulo() {
+    const agora = new Date();
+    const partes = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      hour12: false
+    }).formatToParts(agora);
+
+    const mapa = Object.fromEntries(partes.map(({ type, value }) => [type, value]));
+    return `${mapa.year}-${mapa.month}-${mapa.day}T${mapa.hour}:00`;
+  }
+
   function renderizarPrevisao12h(hourly) {
     if (!previsao12hEl || !hourly?.time) return;
 
-    const proximas12 = hourly.time.slice(0, 12).map((time, i) => ({
+    const chaveHoraAtual = obterChaveHoraAtualSaoPaulo();
+    const indiceInicial = Math.max(hourly.time.findIndex(time => time >= chaveHoraAtual), 0);
+
+    const proximas12 = hourly.time.slice(indiceInicial, indiceInicial + 12).map((time, i) => ({
       time,
-      temp: hourly.temperature_2m[i],
-      precip: hourly.precipitation[i],
-      prob: hourly.precipitation_probability[i]
+      temp: hourly.temperature_2m[indiceInicial + i],
+      precip: hourly.precipitation[indiceInicial + i],
+      prob: hourly.precipitation_probability[indiceInicial + i]
     }));
 
     previsao12hEl.innerHTML = proximas12.map(item => {
-      const horario = new Date(item.time).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
+      const horario = item.time.slice(11, 16);
 
       return `
         <article class="previsao-card" role="listitem" aria-label="Previsão para ${horario}">
