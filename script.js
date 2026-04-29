@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnGPS = document.getElementById("btnGPS");
   const btnRefresh = document.getElementById("btnRefresh");
   const audio = document.getElementById("alertSound");
+  const previsao12hEl = document.getElementById("previsao12h");
 
   function aplicarVisibilidadePainelInfo() {
     if (!painelInfoEl) return;
@@ -136,6 +137,40 @@ document.addEventListener("DOMContentLoaded", () => {
     return "🟢 Sem chuva";
   }
 
+  function iconePorProbabilidade(prob) {
+    if (prob >= 70) return "⛈️";
+    if (prob >= 40) return "🌧️";
+    if (prob >= 20) return "🌦️";
+    return "☁️";
+  }
+
+  function renderizarPrevisao12h(hourly) {
+    if (!previsao12hEl || !hourly?.time) return;
+
+    const proximas12 = hourly.time.slice(0, 12).map((time, i) => ({
+      time,
+      temp: hourly.temperature_2m[i],
+      precip: hourly.precipitation[i],
+      prob: hourly.precipitation_probability[i]
+    }));
+
+    previsao12hEl.innerHTML = proximas12.map(item => {
+      const horario = new Date(item.time).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      return `
+        <article class="previsao-card" role="listitem" aria-label="Previsão para ${horario}">
+          <div class="hora">${horario}</div>
+          <div class="icone-clima">${iconePorProbabilidade(item.prob)}</div>
+          <div class="temperatura">${item.temp.toFixed(0)}°C</div>
+          <div class="chuva">${item.prob}% · ${item.precip.toFixed(1)} mm</div>
+        </article>
+      `;
+    }).join("");
+  }
+
   function renderizarAlerta(prob, chuva, temperatura, vento) {
     const alertaAtivo = prob >= 40 || chuva > 0.5;
 
@@ -215,8 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function atualizarPrevisao() {
-    if (!EXIBIR_PAINEL_INFO) return;
-
     try {
       const r = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&hourly=precipitation_probability,precipitation,temperature_2m,wind_speed_10m&timezone=America/Sao_Paulo`
@@ -225,6 +258,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!r.ok) throw "Erro na previsão";
 
       const data = await r.json();
+      renderizarPrevisao12h(data.hourly);
+
+      if (!EXIBIR_PAINEL_INFO) return;
 
       const prob = Math.max(...data.hourly.precipitation_probability.slice(0, 4));
       const chuva = Math.max(...data.hourly.precipitation.slice(0, 4));
@@ -282,9 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function atualizarTudo() {
-    if (EXIBIR_PAINEL_INFO) {
-      atualizarPrevisao();
-    }
+    atualizarPrevisao();
   }
 
   // ================= INICIALIZAÇÃO =================
