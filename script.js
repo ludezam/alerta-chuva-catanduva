@@ -17,7 +17,7 @@ let climaAtual = {
     sensacao: 0,
     umidade: 0,
     vento: 0,
-	direcaoVento: 0,
+    direcaoVento: 0,
     chuva: 0,
     probabilidade: 0,
     cloudCover: 0,
@@ -148,7 +148,7 @@ async function atualizarClima() {
     if (LAT === null || LON === null)
         return;
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,relative_humidity_2m,cloud_cover,weather_code&daily=sunrise,sunset,weather_code&hourly=temperature_2m,precipitation,precipitation_probability,weather_code&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,relative_humidity_2m,cloud_cover,weather_code&daily=sunrise,sunset&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&timezone=auto`;
         const resposta = await fetch(url);
         const dados = await resposta.json();
 		console.log("URL:", url);
@@ -159,7 +159,7 @@ async function atualizarClima() {
         climaAtual.sensacao = dados.current.apparent_temperature;
         climaAtual.umidade = dados.current.relative_humidity_2m;
         climaAtual.vento = dados.current.wind_speed_10m;
-		climaAtual.direcaoVento = dados.current.wind_direction_10m || 0;
+        climaAtual.direcaoVento = dados.current.wind_direction_10m || 0;
         climaAtual.chuva = dados.current.precipitation;
         climaAtual.probabilidade = dados.current.precipitation_probability;
         climaAtual.cloudCover = dados.current.cloud_cover;
@@ -193,10 +193,12 @@ function atualizarInterface() {
     $("sensacaoAtual").textContent = Math.round(climaAtual.sensacao) + "°";
     $("umidadeAtual").textContent = climaAtual.umidade + "%";
     $("ventoAtual").textContent = Math.round(climaAtual.vento) + " km/h";
-	atualizarSetaVento();
     $("sunrise").textContent = climaAtual.sunrise.slice(11,16);
     $("sunset").textContent = climaAtual.sunset.slice(11,16);
     $("horaLocal").textContent = climaAtual.horarioLocal.slice(11,16);
+
+    // Atualizar seta de vento
+    atualizarSetaVento();
 
     // Atualizar info de precipitação em tempo real
     const infoChuva = $("infoChuvaAtual");
@@ -689,6 +691,16 @@ function relampago() {
 }
 
 /* =====================================================
+   SETA VENTO - ROTAÇÃO CONFORME DIREÇÃO
+===================================================== */
+function atualizarSetaVento() {
+    const setaVento = $("setaVento");
+    if (!setaVento) return;
+    
+    setaVento.style.transform = `rotate(${climaAtual.direcaoVento}deg)`;
+}
+
+/* =====================================================
    WEATHER CODE → ÍCONE
 ===================================================== */
 function obterIcone(codigo) {
@@ -775,17 +787,7 @@ function renderizar12Horas(hourly) {
 
     container.innerHTML = html;
 }
-	
-/* =====================================================
-   SETA VENTO - ROTAÇÃO CONFORME DIREÇÃO
-===================================================== */
-function atualizarSetaVento() {
-    const setaVento = $("setaVento");
-    if (!setaVento) return;
-    
-    setaVento.style.transform = `rotate(${climaAtual.direcaoVento}deg)`;
-}
-	
+
 /* =====================================================
    EVENTOS
 ===================================================== */
