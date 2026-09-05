@@ -148,7 +148,7 @@ async function atualizarClima() {
     if (LAT === null || LON === null)
         return;
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,relative_h[...]`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,relative_h[...]`
         const resposta = await fetch(url);
         const dados = await resposta.json();
 		console.log("URL:", url);
@@ -228,8 +228,7 @@ function atualizarInterface() {
 
 /* =====================================================
    ATUALIZAR DESCRIÇÃO (COM PREVISÃO DE CHUVA)
-=====================================================
-*/
+===================================================== */
 function atualizarDescricao(h) {
     // Calcula precipitação e probabilidade para as próximas 12 horas
     let chuvaTotal = 0;
@@ -261,14 +260,14 @@ function atualizarDescricao(h) {
 
 /* =====================================================
    RADAR
-==================================================== */
+===================================================== */
 function atualizarMapa() {
     $("mapaRadar").src = `https://www.rainviewer.com/map.html?loc=${LAT},${LON},10&oFa=0&layer=radar`;
 }
 
 /* =====================================================
    BUSCA DE CIDADE
-==================================================== */
+===================================================== */
 async function buscarCidade() {
     const nome = $("cidade").value.trim();
 
@@ -295,7 +294,7 @@ function usarGPS() {
 
 /* =====================================================
    CÉU DINÂMICO - BASEADO EM NASCER/PÔR DO SOL
-==================================================== */
+===================================================== */
 function atualizarCeu() {
     const sky = document.getElementById("sky");
     const ciclo = calcularPosicaoDiaNoite();
@@ -472,7 +471,7 @@ function atualizarEstrelas() {
 
     if (ciclo.ehDia) {
         stars.style.opacity = 0;
-		document.body.style.color = "#10438f";
+	document.body.style.color = "#10438f";
         return;
     }
     
@@ -482,7 +481,7 @@ function atualizarEstrelas() {
 
 /* =====================================================
    VIA LÁCTEA
-==================================================== */
+===================================================== */
 function atualizarViaLactea() {
     const milky = $("milkyway");
     const ciclo = calcularPosicaoDiaNoite();
@@ -499,7 +498,7 @@ function atualizarViaLactea() {
 
 /* =====================================================
    ESTRELA CADENTE
-==================================================== */
+===================================================== */
 function criarEstrelaCadente() {
 
     if (climaAtual.cloudCover > 25)
