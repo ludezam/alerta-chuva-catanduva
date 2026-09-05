@@ -47,9 +47,9 @@
         <div id="statusChuva" class="status">
             Carregando clima...
         </div>
-        <div id="descricaoAtual" class="descricao">
+        <!-- <div id="descricaoAtual" class="descricao">
             <p id="descricaoAtual" class="descricao">...</p>
-        </div>
+        </div> -->
         <div id="infoChuvaAtual" class="info-chuva">
             <!-- Será preenchido dinamicamente -->
         </div>
@@ -77,12 +77,17 @@
         <div class="radar-container">
             <iframe id="mapaRadar" title="Radar Meteorológico" allowfullscreen>
             </iframe>
-            <button id="btnFullscreenRadar" class="btn-fullscreen" title="Abrir em tela cheia">
+            <!-- BOTÃO TELA CHEIA - NÃO FUNCIONANDO
+			<button id="btnFullscreenRadar" class="btn-fullscreen" title="Abrir em tela cheia">
                 ⛶ Tela Cheia
-            </button>
+            </button> -->
         </div>
-		
-        <a
+
+		<a
+            href="https://www.cptec.inpe.br/dsat/" target="_blank" class="btn-ipmet">
+            📡 Satélite GOES
+        </a> &nbsp;
+		<a
             href="https://www.ipmetradar.com.br/2mobileGis.php" target="_blank" class="btn-ipmet">
             📡 Ver no IPMet
         </a>
