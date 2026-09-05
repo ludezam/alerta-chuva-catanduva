@@ -17,6 +17,7 @@ let climaAtual = {
     sensacao: 0,
     umidade: 0,
     vento: 0,
+	direcaoVento: 0,
     chuva: 0,
     probabilidade: 0,
     cloudCover: 0,
@@ -158,6 +159,7 @@ async function atualizarClima() {
         climaAtual.sensacao = dados.current.apparent_temperature;
         climaAtual.umidade = dados.current.relative_humidity_2m;
         climaAtual.vento = dados.current.wind_speed_10m;
+		climaAtual.direcaoVento = dados.current.wind_direction_10m || 0;
         climaAtual.chuva = dados.current.precipitation;
         climaAtual.probabilidade = dados.current.precipitation_probability;
         climaAtual.cloudCover = dados.current.cloud_cover;
@@ -191,6 +193,7 @@ function atualizarInterface() {
     $("sensacaoAtual").textContent = Math.round(climaAtual.sensacao) + "°";
     $("umidadeAtual").textContent = climaAtual.umidade + "%";
     $("ventoAtual").textContent = Math.round(climaAtual.vento) + " km/h";
+	atualizarSetaVento();
     $("sunrise").textContent = climaAtual.sunrise.slice(11,16);
     $("sunset").textContent = climaAtual.sunset.slice(11,16);
     $("horaLocal").textContent = climaAtual.horarioLocal.slice(11,16);
@@ -772,7 +775,17 @@ function renderizar12Horas(hourly) {
 
     container.innerHTML = html;
 }
-
+	
+/* =====================================================
+   SETA VENTO - ROTAÇÃO CONFORME DIREÇÃO
+===================================================== */
+function atualizarSetaVento() {
+    const setaVento = $("setaVento");
+    if (!setaVento) return;
+    
+    setaVento.style.transform = `rotate(${climaAtual.direcaoVento}deg)`;
+}
+	
 /* =====================================================
    EVENTOS
 ===================================================== */
