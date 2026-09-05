@@ -815,7 +815,7 @@ setInterval(() => {
 
 function iniciarSistema() {
     iniciarGPS();
-    atualizarDescrição();
+    atualizarDescricao();
     gerarEstrelas();
     atualizarEstrelas();
     iniciarRelampagos();
