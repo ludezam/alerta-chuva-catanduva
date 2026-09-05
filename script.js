@@ -231,60 +231,30 @@ function atualizarInterface() {
 =====================================================
 */
 function atualizarDescricao(h) {
-    const el = $('descricaoAtual');
-    if (!el) return;
-
-    const probs = h?.precipitation_probability || [];
-    const precs = h?.precipitation || [];
-    const times = h?.time || [];
-
-    const agora = new Date(climaAtual.horarioLocal || Date.now());
-
-    // Determina o índice inicial (primeiro horário >= agora) se tivermos times
-    let inicio = 0;
-    if (times.length) {
-        const idx = times.findIndex(t => new Date(t) >= agora);
-        inicio = idx >= 0 ? idx : 0;
-    }
-
-    // Quantos itens temos disponíveis a partir de 'inicio' (até 12)
-    const available = Math.max(probs.length, precs.length, times.length);
-    const limite = Math.min(inicio + 12, available);
-
+    // Calcula precipitação e probabilidade para as próximas 12 horas
     let chuvaTotal = 0;
     let horasComChuva = 0;
-    let primeiraIndex = -1;
-
-    for (let i = inicio; i < limite; i++) {
-        const prob = probs[i] || 0;
-        const amount = precs[i] || 0;
-
+    let primeiraHoraComChuva = -1;
+    
+    for (let i = 0; i < 12; i++) {
+        const prob = (h.precipitation_probability[i] || 0);
+        const amount = (h.precipitation[i] || 0);
+        
         if (prob > 20 || amount > 0.5) {
             chuvaTotal += amount;
             horasComChuva++;
-            if (primeiraIndex === -1) primeiraIndex = i;
+            if (primeiraHoraComChuva === -1) {
+                primeiraHoraComChuva = i;
+            }
         }
     }
 
-    if (horasComChuva > 0) {
-        // Determina texto da primeira hora: se houver times, mostra HH:MM, senão mostra "daqui Xh"
-        let primeiraHoraTexto = '';
-        if (primeiraIndex >= 0 && times[primeiraIndex]) {
-            const d = new Date(times[primeiraIndex]);
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mm = String(d.getMinutes()).padStart(2, '0');
-            primeiraHoraTexto = `${hh}:${mm}`;
-        } else if (primeiraIndex >= 0) {
-            const diffHours = Math.round((primeiraIndex - inicio));
-            primeiraHoraTexto = `daqui ${diffHours}h`;
-        } else {
-            primeiraHoraTexto = 'em breve';
-        }
-
-        el.textContent = `🌧️ Chuva prevista às ${primeiraHoraTexto} — ${chuvaTotal.toFixed(1)}mm nas próximas ${horasComChuva}h`;
+    // Exibir descrição baseada na previsão
+    if (primeiraHoraComChuva >= 0 && horasComChuva > 0) {
+        $('descricaoAtual').textContent = `🌧️ Chuva de ${chuvaTotal.toFixed(1)}mm nas próximas ${horasComChuva}h`;
         climaAtual.proximaChuva = true;
     } else {
-        el.textContent = 'Sem chuva nas próximas 12 horas';
+        $('descricaoAtual').textContent = "Sem chuva nas próximas horas";
         climaAtual.proximaChuva = false;
     }
 }
