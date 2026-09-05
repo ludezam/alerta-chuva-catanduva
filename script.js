@@ -44,7 +44,7 @@ function calcularPosicaoDiaNoite() {
     const agora = obterHoraCidade().getTime();
     const nascer = new Date(climaAtual.sunrise).getTime();
     const por = new Date(climaAtual.sunset).getTime();
-    
+
     if (agora >= nascer && agora <= por) {
         // Durante o dia: calcula progresso de 0 a 1
         return {
@@ -58,12 +58,12 @@ function calcularPosicaoDiaNoite() {
         // Durante a noite: calcula progresso de 0 a 1
         let inicioNoite = por;
         let fimNoite = nascer + 86400000; // próximo nascer
-        
+
         if (agora < nascer) {
             inicioNoite = por - 86400000; // pôr anterior
             fimNoite = nascer;
         }
-        
+
         return {
             ehDia: false,
             progresso: (agora - inicioNoite) / (fimNoite - inicioNoite),
@@ -84,19 +84,19 @@ async function atualizarNomeCidade() {
         console.log("📍 URL de reverse geocoding:", url);
 
         const resposta = await fetch(url);
-        
+
         if (!resposta.ok) {
             console.error("❌ Erro HTTP:", resposta.status);
             throw new Error(`Erro HTTP ${resposta.status}`);
         }
         const dados = await resposta.json();
         console.log("✅ Reverse Geocoding OK:", dados);
-        
+
         if (dados.results && dados.results.length > 0) {
             const local = dados.results[0];
             const cidade = local.name || "";
             const estado = local.admin1 || "";
-            
+
             console.log("🏙️ Cidade encontrada:", cidade, estado);
             $("cidadeAtual").textContent = [cidade, estado].filter(Boolean).join(", ");
         } else {
@@ -124,7 +124,7 @@ function iniciarGPS() {
             LON = pos.coords.longitude;
             console.log("LAT:", LAT);
             console.log("LON:", LON);
-            	
+
             await atualizarNomeCidade();
             await atualizarClima();
         },
@@ -148,7 +148,7 @@ async function atualizarClima() {
     if (LAT === null || LON === null)
         return;
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,relative_h[...]`
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,relative_humidity_2m,cloud_cover,weather_code&daily=sunrise,sunset&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&timezone=auto`;
         const resposta = await fetch(url);
         const dados = await resposta.json();
 		console.log("URL:", url);
@@ -193,6 +193,7 @@ function atualizarInterface() {
     $("sensacaoAtual").textContent = Math.round(climaAtual.sensacao) + "°";
     $("umidadeAtual").textContent = climaAtual.umidade + "%";
     $("ventoAtual").textContent = Math.round(climaAtual.vento) + " km/h";
+
     $("sunrise").textContent = climaAtual.sunrise.slice(11,16);
     $("sunset").textContent = climaAtual.sunset.slice(11,16);
     $("horaLocal").textContent = climaAtual.horarioLocal.slice(11,16);
@@ -234,11 +235,11 @@ function atualizarDescricao(h) {
     let chuvaTotal = 0;
     let horasComChuva = 0;
     let primeiraHoraComChuva = -1;
-    
+
     for (let i = 0; i < 12; i++) {
         const prob = (h.precipitation_probability[i] || 0);
         const amount = (h.precipitation[i] || 0);
-        
+
         if (prob > 20 || amount > 0.5) {
             chuvaTotal += amount;
             horasComChuva++;
@@ -283,13 +284,13 @@ async function buscarCidade() {
 
     $("cidadeAtual").textContent = dados.results[0].name;
     atualizarClima();
-    atualizarDescricao();
+    atualizarDescrição();
     atualizarEstrelas();
 }
 
 function usarGPS() {
     iniciarGPS();
-    atualizarDescricao();
+    atualizarDescrição();
 }
 
 /* =====================================================
@@ -304,7 +305,7 @@ function atualizarCeu() {
 
     if (ciclo.ehDia) {
         // ☀️ CICLO DIURNO (0 = nascer, 1 = pôr)
-        
+
         if (p < 0.15) {
             // 🌅 Amanhecer (0-15% do dia)
             const t = p / 0.15;
@@ -355,7 +356,7 @@ function atualizarCeu() {
         }
     } else {
         // 🌙 CICLO NOTURNO (0 = pôr, 1 = nascer)
-        
+
         if (p < 0.1) {
             // 🌆 Crepúsculo vespertino (0-10% da noite)
             const t = p / 0.1;
@@ -418,11 +419,11 @@ function atualizarSolLua() {
             moonStart = ciclo.por - 86400000;
             moonEnd = ciclo.nascer;
         }
-        
+
         const p = (ciclo.tempoAtual - moonStart) / (moonEnd - moonStart);
         const x = 5 + (p * 90);
         const y = 78 - (Math.sin(p * Math.PI) * 65);
-        
+
         moon.style.left = x + "vw";
         moon.style.top = y + "vh";
         moon.style.opacity = Math.max(0.15, 0.85 - (cloudFactor * 0.6));
@@ -457,7 +458,7 @@ function gerarEstrelas() {
 }
 
 function atualizarEstrelas() {
-    
+
     if (!estrelasCriadas)
         gerarEstrelas();
     const stars = $("stars");
@@ -471,10 +472,10 @@ function atualizarEstrelas() {
 
     if (ciclo.ehDia) {
         stars.style.opacity = 0;
-	document.body.style.color = "#10438f";
+		document.body.style.color = "#10438f";
         return;
     }
-    
+
     stars.style.opacity = Math.max(0.15, 1 - cloud);
 	document.body.style.color = "#fff";
 }
@@ -534,7 +535,7 @@ setInterval(() => {
 
 /* =====================================================
    LOOP VISUAL
-==================================================== */
+===================================================== */
 setInterval(() => {
     atualizarCeu();
     atualizarSolLua();
@@ -544,7 +545,7 @@ setInterval(() => {
 
 /* =====================================================
    NUVENS
-==================================================== */
+===================================================== */
 
 function atualizarNuvens() {
     const back = $("cloudBack");
@@ -583,7 +584,7 @@ function criarNuvem(layer, frontal) {
 
 /* =====================================================
    CHUVA (MAIS SENSÍVEL E INTENSA)
-==================================================== */
+===================================================== */
 function atualizarChuva() {
     const rain = $("rain");
     rain.innerHTML = "";
@@ -610,7 +611,7 @@ function atualizarChuva() {
     // - Probabilidade
     // - Weather code
     let quantidade = 0;
-    
+
     if (temChuvaAgora) {
         // Se está chovendo, quantidade baseada na precipitação em mm
         // 1mm = ~80 gotas, 2mm = ~150, 5mm = ~250
@@ -645,7 +646,7 @@ function atualizarChuva() {
 
 /* =====================================================
    NEBLINA
-==================================================== */
+===================================================== */
 function atualizarNeblina() {
     const fog = $("fog");
     if (climaAtual.weatherCode === 45 || climaAtual.weatherCode === 48) {
@@ -657,7 +658,7 @@ function atualizarNeblina() {
 
 /* =====================================================
    RELÂMPAGOS
-==================================================== */
+===================================================== */
 function iniciarRelampagos() {
     setInterval(() => {
         if (
@@ -676,7 +677,7 @@ function iniciarRelampagos() {
 function relampago() {
     const tela = $("lightning");
     tela.style.opacity = 0.95;
-    
+
 	setTimeout(() => {
         tela.style.opacity = 0;
         if (Math.random() > 0.5) {
@@ -692,7 +693,7 @@ function relampago() {
 
 /* =====================================================
    SETA VENTO - ROTAÇÃO CONFORME DIREÇÃO
-==================================================== */
+===================================================== */
 function atualizarSetaVento() {
     const setaVento = $("setaVento");
     if (!setaVento) return;
@@ -702,7 +703,7 @@ function atualizarSetaVento() {
 
 /* =====================================================
    WEATHER CODE → ÍCONE
-==================================================== */
+===================================================== */
 function obterIcone(codigo) {
     if (codigo === 0)
         return "☀️";
@@ -733,7 +734,7 @@ function obterIcone(codigo) {
 
 /* =====================================================
    PREVISÃO 12H (COM DADOS DE PRECIPITAÇÃO)
-==================================================== */
+===================================================== */
 function renderizar12Horas(hourly) {
     const container = $("previsao12h");
     const agora = new Date(climaAtual.horarioLocal);
@@ -788,9 +789,19 @@ function renderizar12Horas(hourly) {
     container.innerHTML = html;
 }
 
+
+
+
+
+
+
+
+
+
+
 /* =====================================================
    EVENTOS
-==================================================== */
+===================================================== */
 
 $("btnBuscar").addEventListener("click", buscarCidade);
 $("btnGPS").addEventListener("click", usarGPS);
@@ -798,7 +809,7 @@ $('btnRefresh').addEventListener('click', () => { window.location.reload(); });
 
 /* =====================================================
    LOOPS
-==================================================== */
+===================================================== */
 
 setInterval(() => {
     atualizarClima();
@@ -811,7 +822,7 @@ setInterval(() => {
 
 /* =====================================================
    INICIALIZAÇÃO
-==================================================== */
+===================================================== */
 
 function iniciarSistema() {
     iniciarGPS();
