@@ -284,13 +284,13 @@ async function buscarCidade() {
 
     $("cidadeAtual").textContent = dados.results[0].name;
     atualizarClima();
-    atualizarDescrição();
+    atualizarDescricao();
     atualizarEstrelas();
 }
 
 function usarGPS() {
     iniciarGPS();
-    atualizarDescrição();
+    atualizarDescricao();
 }
 
 /* =====================================================
@@ -788,16 +788,6 @@ function renderizar12Horas(hourly) {
 
     container.innerHTML = html;
 }
-
-
-
-
-
-
-
-
-
-
 
 /* =====================================================
    EVENTOS
