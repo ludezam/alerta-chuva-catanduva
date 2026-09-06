@@ -735,8 +735,8 @@ function relampago() {
 function atualizarSetaVento() {
     const setaVento = $("setaVento");
     if (!setaVento) return;
-    
-    setaVento.style.transform = `rotate(${climaAtual.direcaoVento}deg)`;
+
+    setaVento.style.transform = `rotate(${climaAtual.direcaoVento + 180}deg)`;
 }
 
 /* =====================================================
