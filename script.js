@@ -647,19 +647,38 @@ function atualizarChuva() {
     console.log(`🌧️ Chuva renderizada: ${Math.round(quantidade)} gotas (chuva: ${climaAtual.chuva}mm, prob: ${climaAtual.probabilidade}%, código: ${climaAtual.weatherCode})`);
 
     for (let i = 0; i < quantidade; i++) {
-        const drop = document.createElement("div");
-        drop.className = "drop";
-        drop.style.left = Math.random() * 100 + "vw";
-        drop.style.top = (-100 - Math.random() * 500) + "px";
-        drop.style.height = (30 + Math.random() * 120) + "px";
-        drop.style.width = (1 + Math.random() * 2.5) + "px";
 
-        const duracao = 0.5 + Math.random() * 1.2;
-        drop.style.animationDuration = duracao + "s";
+    const drop = document.createElement("div");
+    drop.className = "drop";
+    drop.style.left = Math.random() * 100 + "vw";
+    drop.style.top = (-100 - Math.random() * 500) + "px";
+    // Gotas mais longas com vento forte
+    const altura = 30 + Math.random() * 80 + climaAtual.vento * 2;
+    drop.style.height = altura + "px";
+    drop.style.width = (1 + Math.random() * 2.5) + "px";
+    const duracao = 0.5 + Math.random() * 1.2;
+    drop.style.animationDuration = duracao + "s";
 
-        const inclinacao = climaAtual.vento * 1.1;
-        drop.style.transform = `rotate(${inclinacao}deg)`;
-        rain.appendChild(drop);
+    // Direção do vento
+    const velocidade = climaAtual.vento;
+    const rad = (climaAtual.direcaoVento - 180) * Math.PI / 180;
+    // Rajada aleatória
+    const rajada = (Math.random() - 0.5) * 80;
+    const ventoX = Math.sin(rad) * velocidade * 10 + rajada;
+
+    // Movimento horizontal da gota
+    drop.style.setProperty(
+        "--ventoX",
+        `${ventoX}px`
+    );
+
+    // Inclinação visual da gota
+    drop.style.setProperty(
+        "--angulo",
+        `${ventoX * 0.08}deg`
+    );
+
+    rain.appendChild(drop);
     }
 }
 
