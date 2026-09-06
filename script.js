@@ -453,7 +453,12 @@ let estrelasCriadas = false;
 function gerarEstrelas() {
     const layer = $("stars");
     layer.innerHTML = "";
-    const total = 400;
+    const total =
+    (window.innerWidth < 700 ||
+     navigator.hardwareConcurrency <= 4)
+        ? 120
+        : 350;
+
 
     for (let i = 0; i < total; i++) {
         const star = document.createElement("div");
