@@ -231,16 +231,23 @@ function atualizarInterface() {
    ATUALIZAR DESCRIÇÃO (COM PREVISÃO DE CHUVA)
 ===================================================== */
 function atualizarDescricao(h) {
-    // Calcula precipitação e probabilidade para as próximas 12 horas
+    // Validação: se h for undefined, retorna
+    if (!h || !h.precipitation_probability) {
+        $('descricaoAtual').textContent = "Carregando previsão...";
+        return;
+    }
+
     let chuvaTotal = 0;
     let horasComChuva = 0;
     let primeiraHoraComChuva = -1;
 
+    // Verifica as próximas 12 horas
     for (let i = 0; i < 12; i++) {
         const prob = (h.precipitation_probability[i] || 0);
         const amount = (h.precipitation[i] || 0);
 
-        if (prob > 20 || amount > 0.5) {
+        // ✅ CRITÉRIO MAIS SENSÍVEL: 10% ou 0.1mm (antes era 20% ou 0.5mm)
+        if (prob > 10 || amount > 0.1) {
             chuvaTotal += amount;
             horasComChuva++;
             if (primeiraHoraComChuva === -1) {
@@ -248,6 +255,11 @@ function atualizarDescricao(h) {
             }
         }
     }
+
+    // Debug: mostra os dados detectados
+    console.log(`📊 Previsão 12h: ${horasComChuva} horas com chuva, total: ${chuvaTotal.toFixed(1)}mm`);
+    console.log(`   Prob: ${h.precipitation_probability.slice(0, 12)}`);
+    console.log(`   Precip: ${h.precipitation.slice(0, 12)}`);
 
     // Exibir descrição baseada na previsão
     if (primeiraHoraComChuva >= 0 && horasComChuva > 0) {
