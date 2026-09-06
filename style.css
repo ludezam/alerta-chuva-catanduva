@@ -192,20 +192,29 @@ body{
    z-index:-1;
 }
 
-.drop{
-   position:absolute;
-   border-radius:10px;
-   background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.7));
-   animation:rainFall linear infinite;
+.drop {
+    position: absolute;
+    border-radius: 10px;
+    background: linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.7));
+    animation:rainFall linear infinite;
+    will-change:transform;
 }
 
 @keyframes rainFall {
+
     from {
-        transform:translate(0, -120px);
+        transform:
+            translate(0, -120px)
+            rotate(var(--angulo, 0deg));
     }
 
     to {
-        transform:translate(var(--ventoX), 120vh);
+        transform:
+            translate(
+                var(--ventoX, 0px),
+                120vh
+            )
+            rotate(var(--angulo, 0deg));
     }
 }
 
