@@ -260,16 +260,15 @@ function atualizarDescricao(h) {
         }
     }
 
-    if (horasComChuva > 0) {
+    if (primeiraHoraComChuva === 0) {
         $('descricaoAtual').textContent =
-            `🌧️ Chuva de ${chuvaTotal.toFixed(1)}mm nas próximas ${horasComChuva}h`;
-
-        climaAtual.proximaChuva = true;
-    } else {
+            `🌧️ Chuva esperada na próxima hora. Acumulado em 12h será de ($
+{chuvaTotal.toFixed(1)} mm)`;
+    }
+    else {
         $('descricaoAtual').textContent =
-            "Sem chuva nas próximas horas";
-
-        climaAtual.proximaChuva = false;
+            `🌧️ Chuva prevista às ${horaChuva}. Acumulado em 12h será de ($
+{chuvaTotal.toFixed(1)} mm) `;
     }
 
     atualizarInterface();
