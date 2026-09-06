@@ -199,13 +199,14 @@ body{
    animation:rainFall linear infinite;
 }
 
-@keyframes rainFall{
-   from{
-      transform:translateY(-120px);
-   }
-   to{
-      transform:translateY(120vh);
-   }
+@keyframes rainFall {
+    from {
+        transform:translate(0, -120px);
+    }
+
+    to {
+        transform:translate(var(--ventoX), 120vh);
+    }
 }
 
 /* =====================================================
