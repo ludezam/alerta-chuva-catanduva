@@ -301,13 +301,11 @@ async function buscarCidade() {
 
     $("cidadeAtual").textContent = dados.results[0].name;
     atualizarClima();
-    atualizarDescricao(dados.hourly);
     atualizarEstrelas();
 }
 
 function usarGPS() {
     iniciarGPS();
-    atualizarDescricao(dados.hourly);
 }
 
 /* =====================================================
